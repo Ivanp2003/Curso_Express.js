@@ -2,6 +2,9 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 
+const fs = require('fs');
+const path = require('path');
+const usersFilePath = path.join(__dirname,'users.json');//Para leer archivos
 const app = express();
 app.use(bodyParser.json());//Para convertir en .json
 app.use(bodyParser.urlencoded({extended:true}));//Empaquetamiendo de archivos
@@ -55,6 +58,18 @@ app.post('/api/data',(req,res)=>{
         message:'Datos json recibidos',
         data
     });
+});
+
+
+
+app.get('/users',(req,res)=>{
+    fs.readFile(usersFilePath,'utf-8',(error,data)=>{
+        if(error){
+            return res.status(500).json({error:'Error con la conexion de datos'});
+        }
+        const users = JSON.parse(data);
+        res.json(users);//Enviamos la respuesta en json de users
+    })
 });
 
 app.listen(PORT,()=>{
